@@ -5,6 +5,7 @@ import { transformRestToGraphQL } from '../../utils/queryTransformer'
 import { formatGraphQLResponse } from '../../utils/responseFormatter'
 import { buildGraphQLQuery } from '../../services/query.builder'
 import { executeGraphQLQuery } from '../../services/graphql.client'
+import { buildFieldSelection } from '../../services/introspection'
 
 /**
  * Shared handler for contentByPath endpoint
@@ -38,7 +39,42 @@ export async function handleContentByPath(c: Context) {
     const urlNoSlash = url.endsWith('/') ? url.slice(0, -1) : url
     const urlWithSlash = url.endsWith('/') ? url : `${url}/`
 
-    // Build GraphQL query for path-based lookup
+    // Build field selection based on requested fields or auto-expansion
+    let itemFields = `
+      __typename
+      _id
+      _metadata {
+        key
+        version
+        locale
+        displayName
+        types
+        url {
+          default
+          hierarchical
+          base
+        }
+      }
+    `.trim()
+
+    // If fields are requested or expand is set, enhance the field selection
+    if (restParams.fields && restParams.fields.length > 0) {
+      // User specified fields - combine with base fields
+      const baseFields = ['__typename', '_id']
+      const allFields = [...new Set([...baseFields, ...restParams.fields])]
+      itemFields = allFields.join('\n        ')
+    } else if (restParams.expand === 'auto' || restParams.expand === 'auto_with_fulltext' || restParams.expand === 'full') {
+      // Auto-expand fields - use introspection on _Content type
+      try {
+        const autoFields = await buildFieldSelection('_Content', restParams.depth || 0, new Set(), restParams.expand)
+        itemFields = autoFields
+      } catch (error) {
+        console.warn('Could not auto-expand fields for _Content:', error)
+        // Fall back to default fields
+      }
+    }
+
+    // Build GraphQL query for path-based lookup with dynamic field selection
     const graphqlQuery = `
       query contentByPath($base: String, $url: String!, $urlNoSlash: String!) {
         _Content(
@@ -57,20 +93,7 @@ export async function handleContentByPath(c: Context) {
           }
         ) {
           item {
-            __typename
-            _id
-            _metadata {
-              key
-              version
-              locale
-              displayName
-              types
-              url {
-                default
-                hierarchical
-                base
-              }
-            }
+            ${itemFields}
           }
         }
       }

@@ -3,6 +3,8 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
+import { serveStatic } from '@hono/node-server/serve-static'
+import { cacheMiddleware } from './middleware/cache'
 import contentRoutes from './routes/content'
 import previewRoutes from './routes/preview'
 import publishedRoutes from './routes/published'
@@ -15,6 +17,7 @@ const app = new Hono()
 // Middleware
 app.use('*', logger())
 app.use('*', cors())
+app.use('/api/*', cacheMiddleware) // Cache API routes for 120 seconds
 
 // Routes
 app.get('/', (c) => {
@@ -27,12 +30,15 @@ app.get('/', (c) => {
       published: '/api/published/:contentType',
       graphql: 'POST /graphql (raw GraphQL passthrough)',
       legacy: '/api/:contentType (deprecated)',
-      docs: 'See README.md for documentation'
+      docs: '/docs (interactive API documentation)'
     }
   })
 })
 
 app.route('/health', healthRoutes)
+
+// Documentation
+app.get('/docs', serveStatic({ path: './public/docs.html' }))
 
 // New routes - authentication determined by path
 app.route('/api/preview', previewRoutes)

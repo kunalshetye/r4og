@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL REST API Wrapper - Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section h3 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--primary);
+        }
+
+        .content {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h2 {
+            font-size: 1.875rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .section h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 0.75rem 0;
+            color: var(--text-primary);
+        }
+
+        .endpoint-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .http-method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .method-get {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        .method-post {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .endpoint-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .param-table th {
+            background: var(--bg-tertiary);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .param-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .param-name {
+            font-family: 'Courier New', monospace;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 1rem 0;
+        }
+
+        .inline-code {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--primary);
+        }
+
+        /* Interactive API Tester */
+        .api-tester {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid #bae6fd;
+        }
+
+        .api-tester h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response-container {
+            margin-top: 1.5rem;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #1e293b;
+            color: white;
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+        }
+
+        .response-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .status-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-error {
+            background: var(--error);
+            color: white;
+        }
+
+        .response-body {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0 0 6px 6px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .feature-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--warning);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .header h1 {
+                font-size: 1.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>GraphQL REST API Wrapper</h1>
+            <p>Dynamic REST interface for GraphQL CMS with built-in query transformation</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="nav-section">
+                    <h3>Getting Started</h3>
+                    <a href="#overview" class="nav-link">Overview</a>
+                    <a href="#authentication" class="nav-link">Authentication</a>
+                    <a href="#try-it" class="nav-link">Try It Out</a>
+                </div>
+                <div class="nav-section">
+                    <h3>Endpoints</h3>
+                    <a href="#published-routes" class="nav-link">Published Content</a>
+                    <a href="#preview-routes" class="nav-link">Preview Content</a>
+                    <a href="#legacy-routes" class="nav-link">Legacy Routes</a>
+                    <a href="#other-routes" class="nav-link">Other Routes</a>
+                </div>
+                <div class="nav-section">
+                    <h3>Query Parameters</h3>
+                    <a href="#pagination" class="nav-link">Pagination</a>
+                    <a href="#filtering" class="nav-link">Filtering</a>
+                    <a href="#sorting" class="nav-link">Sorting</a>
+                    <a href="#advanced" class="nav-link">Advanced Options</a>
+                </div>
+                <div class="nav-section">
+                    <h3>Examples</h3>
+                    <a href="#examples" class="nav-link">Usage Examples</a>
+                </div>
+            </aside>
+
+            <main class="content">
+                <section id="overview" class="section">
+                    <h2>Overview</h2>
+                    <p>This API provides a RESTful interface to GraphQL content types with dynamic routing and minimal validation. It transforms REST query parameters into GraphQL queries, making it easy to work with structured content without writing GraphQL.</p>
+
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>Dynamic Routing</h4>
+                            <p>Accept any content type name - no hardcoded schemas required.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Powerful Filtering</h4>
+                            <p>Support for nested filters, logical operators, and complex queries.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Auto-Expand</h4>
+                            <p>Automatically expand scalar fields with intelligent depth control.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Type-Safe</h4>
+                            <p>Built with TypeScript and Zod validation for reliability.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="authentication" class="section">
+                    <h2>Authentication</h2>
+                    <p><strong>Published Routes:</strong> Use SingleKey authentication (public access)</p>
+                    <p><strong>Preview Routes:</strong> Require App Key + Secret authentication for draft/preview content</p>
+                    <p>Configure authentication via environment variables (<span class="inline-code">OPTIMIZELY_GRAPH_SINGLE_KEY</span>, <span class="inline-code">OPTIMIZELY_GRAPH_APP_KEY</span>, etc.)</p>
+                </section>
+
+                <section id="try-it" class="section">
+                    <h2>Try It Out</h2>
+                    <div class="api-tester">
+                        <h3>Interactive API Tester</h3>
+
+                        <div class="form-group">
+                            <label for="baseUrl">Base URL</label>
+                            <input type="text" id="baseUrl" class="form-control" value="http://localhost:3000" placeholder="http://localhost:3000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endpoint">Endpoint Path</label>
+                            <input type="text" id="endpoint" class="form-control" value="/api/published/ArticlePage" placeholder="/api/published/ArticlePage">
+                            <small style="color: var(--text-secondary); margin-top: 0.25rem; display: block;">Example: /api/published/ArticlePage</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="queryParams">Query Parameters</label>
+                            <input type="text" id="queryParams" class="form-control" placeholder="limit=10&orderBy[_modified]=DESC">
+                            <small style="color: var(--text-secondary); margin-top: 0.25rem; display: block;">Example: limit=10&orderBy[_modified]=DESC</small>
+                        </div>
+
+                        <button id="executeBtn" class="btn btn-primary">
+                            <span id="btnText">Execute Request</span>
+                        </button>
+
+                        <div id="responseContainer" style="display: none;" class="response-container">
+                            <div class="response-header">
+                                <span>Response</span>
+                                <span id="responseStatus" class="response-status"></span>
+                            </div>
+                            <pre id="responseBody" class="response-body"></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="published-routes" class="section">
+                    <h2>Published Content Routes</h2>
+                    <p>Access published content using SingleKey authentication.</p>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/published/:contentType</span>
+                        </div>
+                        <p class="endpoint-description">Query published content by type with filtering, pagination, and sorting.</p>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">:contentType</span></td>
+                                    <td>string</td>
+                                    <td>Content type name (e.g., ArticlePage, Product, Hero)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/published/:contentType/:id</span>
+                        </div>
+                        <p class="endpoint-description">Get a single published item by ID.</p>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">:contentType</span></td>
+                                    <td>string</td>
+                                    <td>Content type name</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">:id</span></td>
+                                    <td>string</td>
+                                    <td>Content item ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/published/contentByPath</span>
+                        </div>
+                        <p class="endpoint-description">Get published content by URL path (routing).</p>
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="param-name">url</span></td>
+                                    <td>string</td>
+                                    <td>URL path to match</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="param-name">base</span></td>
+                                    <td>string</td>
+                                    <td>Base locale (optional)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="preview-routes" class="section">
+                    <h2>Preview Content Routes</h2>
+                    <p>Access draft/preview content with authentication required.</p>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/preview/:contentType</span>
+                        </div>
+                        <p class="endpoint-description">Query preview/draft content by type.</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/preview/:contentType/:id</span>
+                        </div>
+                        <p class="endpoint-description">Get a single preview item by ID.</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/preview/contentByPath</span>
+                        </div>
+                        <p class="endpoint-description">Get preview content by URL path.</p>
+                    </div>
+                </section>
+
+                <section id="legacy-routes" class="section">
+                    <h2>Legacy Routes <span class="badge">DEPRECATED</span></h2>
+                    <p>These routes are deprecated. Use <span class="inline-code">/api/published</span> or <span class="inline-code">/api/preview</span> instead.</p>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/api/:contentType</span>
+                        </div>
+                        <p class="endpoint-description">Legacy route for querying content.</p>
+                    </div>
+                </section>
+
+                <section id="other-routes" class="section">
+                    <h2>Other Routes</h2>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-post">POST</span>
+                            <span class="endpoint-path">/graphql</span>
+                        </div>
+                        <p class="endpoint-description">Raw GraphQL passthrough for power users.</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/health</span>
+                        </div>
+                        <p class="endpoint-description">Health check endpoint.</p>
+                    </div>
+
+                    <div class="endpoint-card">
+                        <div class="endpoint-header">
+                            <span class="http-method method-get">GET</span>
+                            <span class="endpoint-path">/health/test</span>
+                        </div>
+                        <p class="endpoint-description">Test GraphQL connection.</p>
+                    </div>
+                </section>
+
+                <section id="pagination" class="section">
+                    <h2>Pagination</h2>
+                    <p>Control result sets with pagination parameters:</p>
+                    <div class="code-block">?limit=20&skip=10&cursor=abc123</div>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">limit</span></td>
+                                <td>Maximum number of items to return</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">skip</span></td>
+                                <td>Number of items to skip (offset)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">cursor</span></td>
+                                <td>Cursor for cursor-based pagination</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="filtering" class="section">
+                    <h2>Filtering</h2>
+                    <p>Use nested notation for complex filters:</p>
+
+                    <h3>Simple Filters</h3>
+                    <div class="code-block">?where[Heading][eq]=Welcome
+?where[Author][contains]=John
+?where[_modified][gte]=2024-01-01</div>
+
+                    <h3>Logical Operators</h3>
+                    <div class="code-block">?where[_and][0][field1][eq]=value1&where[_and][1][field2][eq]=value2
+?where[_or][0][Status][eq]=Published&where[_or][1][Status][eq]=Draft</div>
+
+                    <h3>Common Operators</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Operator</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">eq</span></td>
+                                <td>Equals</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">ne</span></td>
+                                <td>Not equals</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">contains</span></td>
+                                <td>Contains text</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">gte</span></td>
+                                <td>Greater than or equal</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">lte</span></td>
+                                <td>Less than or equal</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">exist</span></td>
+                                <td>Field exists</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="sorting" class="section">
+                    <h2>Sorting</h2>
+                    <p>Sort results by one or more fields:</p>
+                    <div class="code-block">?orderBy[_modified]=DESC&orderBy[Heading]=ASC</div>
+                    <p>Use <span class="inline-code">ASC</span> for ascending or <span class="inline-code">DESC</span> for descending order.</p>
+                </section>
+
+                <section id="advanced" class="section">
+                    <h2>Advanced Options</h2>
+
+                    <h3>Localization</h3>
+                    <div class="code-block">?locale=en,fr</div>
+
+                    <h3>Field Selection</h3>
+                    <div class="code-block">?fields=_id,Heading,Author</div>
+
+                    <h3>Auto-Expand</h3>
+                    <div class="code-block">?expand=auto                    # Auto-expand scalar fields (excludes _fulltext)
+?expand=auto_with_fulltext      # Auto-expand with _fulltext included
+?expand=auto&depth=1            # Auto-expand with nested objects</div>
+
+                    <h3>Multiple IDs</h3>
+                    <div class="code-block">?ids=id1,id2,id3</div>
+
+                    <h3>Tracking</h3>
+                    <div class="code-block">?track=campaign_123</div>
+
+                    <h3>Fragments (Polymorphic Types)</h3>
+                    <div class="code-block">?fragments=Hero,Card,Button</div>
+                </section>
+
+                <section id="examples" class="section">
+                    <h2>Usage Examples</h2>
+
+                    <h3>List Articles</h3>
+                    <div class="code-block">GET /api/published/ArticlePage?limit=10&orderBy[_modified]=DESC</div>
+
+                    <h3>Search with Filter</h3>
+                    <div class="code-block">GET /api/published/Hero?where[Heading][contains]=Welcome&locale=en</div>
+
+                    <h3>Get Single Item</h3>
+                    <div class="code-block">GET /api/published/Product/abc123?fields=_id,Title,Price</div>
+
+                    <h3>Get Content by URL Path</h3>
+                    <div class="code-block">GET /api/published/contentByPath?url=/products/laptop&base=en</div>
+
+                    <h3>Query with Fragments</h3>
+                    <div class="code-block">GET /api/published/LandingPage?fragments=Hero,Card,Button</div>
+
+                    <h3>Complex Query</h3>
+                    <div class="code-block">GET /api/published/LandingPage?where[_and][0][SeoSettings][exist]=true&where[_and][1][_modified][gte]=2024-01-01&limit=5</div>
+
+                    <h3>Raw GraphQL</h3>
+                    <div class="code-block">POST /graphql
+Content-Type: application/json
+
+{
+  "query": "query { ArticlePage { items { _id Heading } } }"
+}</div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Interactive API Tester
+        const executeBtn = document.getElementById('executeBtn');
+        const btnText = document.getElementById('btnText');
+        const baseUrlInput = document.getElementById('baseUrl');
+        const endpointInput = document.getElementById('endpoint');
+        const queryParamsInput = document.getElementById('queryParams');
+        const responseContainer = document.getElementById('responseContainer');
+        const responseStatus = document.getElementById('responseStatus');
+        const responseBody = document.getElementById('responseBody');
+
+        executeBtn.addEventListener('click', async () => {
+            const baseUrl = baseUrlInput.value.trim();
+            const endpoint = endpointInput.value.trim();
+            const queryParams = queryParamsInput.value.trim();
+
+            if (!baseUrl || !endpoint) {
+                alert('Please provide both Base URL and Endpoint Path');
+                return;
+            }
+
+            const url = queryParams
+                ? `${baseUrl}${endpoint}?${queryParams}`
+                : `${baseUrl}${endpoint}`;
+
+            // Show loading state
+            executeBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading-spinner"></span> Loading...';
+            responseContainer.style.display = 'none';
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch(url);
+                const endTime = performance.now();
+                const duration = Math.round(endTime - startTime);
+
+                const data = await response.json();
+
+                // Show response
+                responseContainer.style.display = 'block';
+
+                if (response.ok) {
+                    responseStatus.className = 'response-status status-success';
+                    responseStatus.textContent = `${response.status} OK (${duration}ms)`;
+                } else {
+                    responseStatus.className = 'response-status status-error';
+                    responseStatus.textContent = `${response.status} ${response.statusText} (${duration}ms)`;
+                }
+
+                responseBody.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseContainer.style.display = 'block';
+                responseStatus.className = 'response-status status-error';
+                responseStatus.textContent = 'Network Error';
+                responseBody.textContent = `Error: ${error.message}\n\nMake sure:\n1. The server is running\n2. CORS is enabled\n3. The URL is correct`;
+            } finally {
+                executeBtn.disabled = false;
+                btnText.textContent = 'Execute Request';
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
